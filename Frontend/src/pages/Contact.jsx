@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { createContact } from "../services/api";
 
 function Contact() {
     const [formData, setFormData] = useState({
@@ -10,25 +10,43 @@ function Contact() {
     });
 
     const [submitted, setSubmitted] = useState(false);
+    const [error, setError] = useState("");
 
     const handleChange = (event) => {
         setFormData({
             ...formData,
             [event.target.name]: event.target.value
         });
+
+        setSubmitted(false);
+        setError("");
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        setSubmitted(true);
+        setSubmitted(false);
+        setError("");
 
-        setFormData({
-            name: "",
-            email: "",
-            subject: "",
-            message: ""
-        });
+        try {
+            await createContact(
+                formData.name,
+                formData.email,
+                formData.subject,
+                formData.message
+            );
+
+            setSubmitted(true);
+
+            setFormData({
+                name: "",
+                email: "",
+                subject: "",
+                message: ""
+            });
+        } catch (error) {
+            setError(error.message || "Failed to send message");
+        }
     };
 
     return (
@@ -120,6 +138,12 @@ function Contact() {
                         {submitted && (
                             <div className="mt-6 rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-5 py-4 text-sm text-emerald-300">
                                 Your message has been submitted successfully.
+                            </div>
+                        )}
+
+                        {error && (
+                            <div className="mt-6 rounded-xl border border-red-400/20 bg-red-400/10 px-5 py-4 text-sm text-red-300">
+                                {error}
                             </div>
                         )}
 
@@ -216,4 +240,3 @@ function Contact() {
 }
 
 export default Contact;
-

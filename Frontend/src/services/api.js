@@ -1,4 +1,4 @@
-const API_URL = "http://aaf1b7579ede94ffcb75cfb893909f05-816217463.ap-southeast-2.elb.amazonaws.com:5000/api";
+const API_URL = "http://localhost:5000/api";
 
 export const loginUser = async (email, password) => {
     const response = await fetch(`${API_URL}/auth/login`, {
